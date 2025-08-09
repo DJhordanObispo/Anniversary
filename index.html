@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Feliz Aniversario 💖</title>
+<style>
+    body{
+        margin:0;padding:0;
+        background-color:#ffe6f0;
+        font-family:'Comic Sans MS',cursive,sans-serif;
+        text-align:center;color:#ff66a3;overflow:hidden;
+    }
+    .hidden{display:none;}
+    h1{font-size:3rem;margin-top:20px;animation:latido 1.5s infinite;}
+    h2{font-size:1.5rem;margin-bottom:10px;}
+    .mensaje{
+        font-family:'Brush Script MT',cursive;
+        font-size:1.3rem;max-width:700px;margin:0 auto 30px auto;
+        color:#ff80b3;padding:0 15px;opacity:0;animation:fadeIn 2s forwards;animation-delay:1s;
+    }
+    @keyframes fadeIn{to{opacity:1}}
+    @keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+    .cinnamoroll{
+        width:180px;margin:15px;border-radius:15px;
+        box-shadow:0 0 15px #ffb3c6;transition:transform .3s ease;z-index:2;
+        opacity:0;animation:fadeIn 2s forwards;animation-delay:2s;
+    }
+    .cinnamoroll:hover{transform:scale(1.1)}
+    footer{margin-top:20px;font-size:1rem;z-index:2;position:relative;opacity:0;animation:fadeIn 2s forwards;animation-delay:3s}
+    #start-screen{
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background-color:#ffd6e8;display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:40;
+    }
+    #start-btn{
+        background-color:#ff80b3;color:white;border:none;padding:15px 30px;font-size:1.2rem;border-radius:30px;cursor:pointer;
+        box-shadow:0 0 10px #ff99cc;transition:transform .2s;
+    }
+    #start-btn:hover{transform:scale(1.05)}
+    
+    .heart{
+        position:absolute;
+        bottom:-40px;             
+        pointer-events:none;       
+        z-index:1;
+        transform-origin:center;
+    }
+    @keyframes floatUp{
+        0%{ transform: translateY(0) scale(1); opacity:0.9; }
+        20%{ opacity:1; }
+        100%{ transform: translateY(-120vh) scale(1.4); opacity:0; }
+    }
+
+    .fotos-pareja{display:flex;justify-content:space-between;align-items:center;max-width:800px;margin:20px auto;padding:0 20px}
+    .foto-pareja{width:160px;height:160px;object-fit:cover;border-radius:50%;border:4px solid #ffb3c6;box-shadow:0 0 15px #ffb3c6;animation:latido 2s infinite}
+    .music-btn{background-color:#ff99cc;color:white;border:none;padding:10px 15px;border-radius:20px;font-size:1rem;cursor:pointer;margin-top:10px;box-shadow:0 0 10px #ffb3c6}
+    .music-btn:hover{background-color:#ff66a3}
+    .sorpresa{display:none;margin-top:30px;font-size:1.5rem;color:#ff4d94;animation:aparecer 2s ease forwards}
+    @keyframes aparecer{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
+
+    #tap-overlay{
+        position:fixed;inset:0;background:rgba(255,214,231,0.98);z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    }
+    #tap-overlay.hidden{display:none}
+    #tap-play-btn{background:#ff66a3;color:#fff;padding:18px 28px;border-radius:30px;border:none;font-size:1.1rem;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.1)}
+    #msg-error{color:#b3005b;margin-top:12px;font-size:0.95rem}
+</style>
+</head>
+<body>
+
+<div id="start-screen" aria-hidden="false">
+    <h2>💖 Haz clic para comenzar nuestra sorpresa 💖</h2>
+    <button id="start-btn">Comenzar</button>
+</div>
+
+<div id="main-content" class="hidden" aria-hidden="true">
+    <h1>💖 Feliz Aniversario 💖</h1>
+    <h2>Te amo &lt;3</h2>
+
+    <p class="mensaje">
+        Amada mía, hoy celebramos otro mes más de esta historia tan bonita que escribimos juntos.
+        Eres mi razón de sonreír cada día, mi paz, mi alegría y mi lugar seguro.
+        Contigo todo es más lindo, incluso los días simples.
+        Gracias por ser tú, por amarme y dejarme amarme.
+        Te amo más de lo que puedo decir… y siempre será así. 💕
+    </p>
+
+    <div class="fotos-pareja">
+        <img class="foto-pareja" src="./Us_1.jpg" alt="Nosotros 1">
+        <img class="cinnamoroll" src="./cinna1.gif" alt="Cinnamoroll">
+        <img class="foto-pareja" src="./Us_2.jpg" alt="Nosotros 2">
+    </div>
+
+    <img class="cinnamoroll" src="./cinna2.gif" alt="Cinnamoroll">
+    <img class="cinnamoroll" src="./cinna3.gif" alt="Cinnamoroll">
+
+    <div>
+        <button class="music-btn" onclick="iniciarSorpresa()">🎵 Reproducir Música</button>
+    </div>
+
+    <div class="sorpresa" id="sorpresa">🎁 Siempre serás mi persona favorita 💖</div>
+
+    <footer>Hecho con 💕 para ti, mi amor.</footer>
+</div>
+
+<div id="tap-overlay" class="hidden" style="display:none">
+    <button id="tap-play-btn">Toca la pantalla para activar la música</button>
+    <div id="msg-error"></div>
+</div>
+
+<audio id="musica" loop preload="auto">
+    <source src="./A_ST1_-_Yearning_Heart_Boys_Over_Flowers_OST_2009_(mp3.pm).mp3" type="audio/mpeg">
+    Tu navegador no soporta audio.
+</audio>
+
+<script>
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+
+        heart.innerHTML = '💗';
+        const left = Math.random() * 90 + 5;
+        heart.style.left = left + 'vw';
+        const size = Math.random() * 26 + 16; 
+        heart.style.fontSize = size + 'px';
+
+        const colors = ['#ff99cc','#ff80b3','#ff6fa6','#ffc0db','#ffd1ea'];
+        heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+
+        const dur = (Math.random() * 3) + 4;
+        heart.style.animationName = 'floatUp';
+        heart.style.animationDuration = dur + 's';
+        heart.style.animationTimingFunction = 'cubic-bezier(.2,.8,.2,1)';
+
+        heart.style.transform = `rotate(${(Math.random()*40)-20}deg)`;
+
+        document.body.appendChild(heart);
+        setTimeout(()=> {
+            heart.remove();
+        }, (dur * 1000) + 300);
+    }
+
+    let heartInterval = null;
+
+    function iniciarSorpresa() {
+        const start = document.getElementById('start-screen');
+        if (start) start.style.display = 'none';
+        const main = document.getElementById('main-content');
+        main.classList.remove('hidden');
+        main.setAttribute('aria-hidden','false');
+
+        if (!heartInterval) heartInterval = setInterval(createHeart, 300);
+
+        const audio = document.getElementById('musica');
+        audio.currentTime = 0;
+        const playPromise = audio.play();
+
+        if (playPromise !== undefined) {
+            playPromise.then(()=> {
+                hideTapOverlay();
+                setTimeout(()=> document.getElementById('sorpresa').style.display='block', 5000);
+            }).catch((err)=> {
+                console.warn('Autoplay bloqueado:', err);
+                showTapOverlay('Si la música no comienza, toca la pantalla para activarla.');
+                setTimeout(()=> document.getElementById('sorpresa').style.display='block', 5000);
+            });
+        } else {
+            setTimeout(()=> document.getElementById('sorpresa').style.display='block', 5000);
+        }
+    }
+
+    function showTapOverlay(message) {
+        const overlay = document.getElementById('tap-overlay');
+        const msg = document.getElementById('msg-error');
+        msg.textContent = message || '';
+        overlay.style.display = 'flex';
+        overlay.classList.remove('hidden');
+
+        const tryPlay = () => {
+            const audio = document.getElementById('musica');
+            audio.play().then(()=> {
+                hideTapOverlay();
+                document.getElementById('sorpresa').style.display='block';
+            }).catch((err) => {
+                console.warn('Intento desde overlay falló:', err);
+                msg.textContent = 'No se pudo reproducir. Verifica la ruta del archivo.';
+                audio.controls = true;
+            });
+        };
+
+        document.getElementById('tap-play-btn').onclick = tryPlay;
+
+        const onceTouch = (e) => { tryPlay(); window.removeEventListener('touchstart', onceTouch); window.removeEventListener('click', onceTouch); };
+        window.addEventListener('touchstart', onceTouch, {passive:true});
+        window.addEventListener('click', onceTouch);
+    }
+
+    function hideTapOverlay(){
+        const overlay = document.getElementById('tap-overlay');
+        overlay.style.display = 'none';
+        overlay.classList.add('hidden');
+    }
+
+    document.getElementById('start-btn').addEventListener('click', iniciarSorpresa);
+
+    window.iniciarSorpresa = iniciarSorpresa;
+
+    const audioEl = document.getElementById('musica');
+    audioEl.addEventListener('error', function(){
+        console.warn('Error cargando el archivo de audio. Verifica la ruta y el nombre del archivo.');
+        const msg = document.getElementById('msg-error');
+        if (msg) msg.textContent = 'Archivo de audio no encontrado. Revisa la ruta.';
+    });
+</script>
+</body>
+</html>
